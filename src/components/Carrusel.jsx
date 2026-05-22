@@ -12,9 +12,16 @@ const Carrusel = () => {
     const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-        // Usamos la variable de entorno para producción
-        fetch(`${import.meta.env.VITE_API_URL}/slides`)
-            .then(res => res.json())
+        // Red de seguridad: si Vercel no inyecta la variable, usamos la URL fija
+        const baseUrl = import.meta.env.VITE_API_URL || "https://radio-libertad-back.vercel.app/api";
+        
+        console.log("DEBUG: La URL de los slides es:", `${baseUrl}/slides`);
+
+        fetch(`${baseUrl}/slides`)
+            .then(res => {
+                if (!res.ok) throw new Error(`Error ${res.status}: No se pudo conectar al servidor`);
+                return res.json();
+            })
             .then(data => {
                 setSlides(data);
                 setCargando(false);

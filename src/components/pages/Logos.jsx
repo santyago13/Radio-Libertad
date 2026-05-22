@@ -6,14 +6,10 @@ const Logos = () => {
     const [sponsors, setSponsors] = useState([]);
 
     useEffect(() => {
-        // Obtenemos la URL de la variable de entorno
-        const baseUrl = import.meta.env.VITE_API_URL;
+        // Red de seguridad: si Vercel no inyecta la variable, usamos la URL fija
+        const baseUrl = import.meta.env.VITE_API_URL || "https://radio-libertad-back.vercel.app/api";
         
-        // Validación de seguridad para debuggear
-        if (!baseUrl) {
-            console.error("❌ ERROR: VITE_API_URL no está definida en las variables de entorno de Vercel");
-            return;
-        }
+        console.log("DEBUG: La URL que se está usando para el fetch es:", `${baseUrl}/sponsors`);
 
         fetch(`${baseUrl}/sponsors`)
             .then(res => {
@@ -27,7 +23,6 @@ const Logos = () => {
             .catch(error => console.error("Error al cargar logos:", error));
     }, []);
 
-    // Si no hay sponsors, no renderizamos nada (o podrías poner un esqueleto de carga)
     if (sponsors.length === 0) return null; 
 
     const carruselInfinito = [...sponsors, ...sponsors, ...sponsors, ...sponsors];
