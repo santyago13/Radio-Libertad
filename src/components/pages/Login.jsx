@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Reveal from '../shared/Reveal'; // Asegurate de importar tu componente Reveal
+import Reveal from '../shared/Reveal'; 
 
 const Login = () => {
     const [usuario, setUsuario] = useState('');
@@ -16,7 +16,8 @@ const Login = () => {
         setCargando(true);
 
         try {
-            const respuesta = await fetch('http://localhost:5000/api/auth/login', {
+            // IMPORTANTE: Cambié localhost por la variable de entorno para producción
+            const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario, password })
@@ -25,10 +26,7 @@ const Login = () => {
             const data = await respuesta.json();
 
             if (respuesta.ok) {
-                // Guardamos el pase VIP
                 localStorage.setItem('tokenAdmin', data.token);
-                
-                // Avisamos al Menú que el estado de sesión cambió
                 window.dispatchEvent(new Event('auth-change'));
                 
                 Swal.fire({

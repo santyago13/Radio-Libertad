@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Reveal from '../shared/Reveal'; // Asegurate de tener el componente en la misma carpeta
+import Reveal from '../shared/Reveal'; 
 
 const Logos = () => {
     const [sponsors, setSponsors] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/sponsors')
+        // Usamos la variable de entorno para que funcione en Vercel
+        fetch(`${import.meta.env.VITE_API_URL}/sponsors`)
             .then(res => res.json())
             .then(data => {
                 const sponsorsActivos = data.filter(sponsor => sponsor.estado === 'Activo');
@@ -17,7 +18,6 @@ const Logos = () => {
 
     if (sponsors.length === 0) return null; 
 
-    // Multiplicamos la lista de sponsors por 4. 
     const carruselInfinito = [...sponsors, ...sponsors, ...sponsors, ...sponsors];
 
     const RenderSponsor = ({ sponsor }) => {
@@ -68,7 +68,6 @@ const Logos = () => {
                 `}
             </style>
 
-            {/* Aplicamos Reveal directamente al contenedor del carrusel manteniendo sus clases */}
             <Reveal animation="fade-in-up" delay="300ms" className="relative w-full flex">
                 
                 {/* Sombras laterales */}
