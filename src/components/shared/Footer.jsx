@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
+  // --- LÓGICA DE SESIÓN (SIN BORRAR NADA MÁS) ---
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('tokenAdmin'));
+
+  useEffect(() => {
+    const handleAuthChange = () => setIsLoggedIn(!!localStorage.getItem('tokenAdmin'));
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
+  }, []);
+
+  const cerrarSesion = () => {
+    localStorage.removeItem('tokenAdmin');
+    window.dispatchEvent(new Event('auth-change'));
+  };
+
   // Obtenemos el año actual automáticamente para el copyright
   const anioActual = new Date().getFullYear();
 
@@ -12,8 +27,8 @@ const Footer = () => {
           {/* Columna 1: Marca y Descripción */}
           <div className="flex flex-col items-start">
             {/* Logo Tipográfico (Mismo estilo que el menú) */}
-            <a
-              href="#"
+            <Link
+              to="/"
               className="flex items-center gap-2 group cursor-pointer mb-4"
             >
               <div className="font-black text-2xl tracking-tighter uppercase">
@@ -24,7 +39,7 @@ const Footer = () => {
               <span className="text-neutral-400 font-light text-sm tracking-widest border-l border-neutral-700 pl-2">
                 103.1
               </span>
-            </a>
+            </Link>
             <p className="text-sm leading-relaxed max-w-xs">
               Transmitiendo desde el corazón de San Pedro de Colalao.
               Acompañando tus días con la mejor música y la información local y
@@ -40,29 +55,39 @@ const Footer = () => {
               </h4>
               <ul className="flex flex-col gap-3 text-sm font-medium">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/"
                     className="hover:text-red-500 transition-colors flex items-center gap-2"
                   >
                     <span className="text-red-600 text-xs">▸</span> Inicio
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/quienes-somos"
                     className="hover:text-red-500 transition-colors flex items-center gap-2"
                   >
                     <span className="text-red-600 text-xs">▸</span> Quienes
                     Somos
-                  </a>
+                  </Link>
                 </li>
+                {/* LÓGICA DE ACCEDER / CERRAR SESIÓN */}
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-red-500 transition-colors flex items-center gap-2"
-                  >
-                    <span className="text-red-600 text-xs">▸</span> Acceder
-                  </a>
+                  {!isLoggedIn ? (
+                    <Link
+                      to="/acceder"
+                      className="hover:text-red-500 transition-colors flex items-center gap-2"
+                    >
+                      <span className="text-red-600 text-xs">▸</span> Acceder
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={cerrarSesion}
+                      className="hover:text-red-500 transition-colors flex items-center gap-2"
+                    >
+                      <span className="text-red-600 text-xs">▸</span> Cerrar Sesión
+                    </button>
+                  )}
                 </li>
               </ul>
             </div>
@@ -115,8 +140,7 @@ const Footer = () => {
                     d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
                   />
                 </svg>
-                <span>+54 9 381 XXXXXXX</span>{" "}
-                {/* Acá va el número de la radio */}
+                <span>+54 9 381 XXXXXXX</span>
               </li>
             </ul>
 
@@ -161,7 +185,7 @@ const Footer = () => {
         </div>
 
         {/* Barra inferior: Copyright y Créditos */}
-        <div className="border-t border-neutral-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-neutral-500">
+        <div className="border-t border-neutral-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-neutral-400">
           <p>© {anioActual} Radio Libertad. Todos los derechos reservados.</p>
           <p>
             Desarrollado en <span className="text-red-600">Tucumán</span>

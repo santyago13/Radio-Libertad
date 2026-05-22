@@ -6,6 +6,7 @@ import Inicio from "./components/pages/Inicio";
 import QuienesSomos from "./components/pages/QuienesSomos";
 import Login from "./components/pages/Login";
 import Panel from "./components/pages/Panel";
+import ScrollToTop from "./components/shared/ScrollToTop";
 
 // ESTE ES EL PATOVICA: Protege la ruta del panel
 const RutaProtegida = ({ children }) => {
@@ -23,6 +24,7 @@ const RutaProtegida = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop/>
       <Menu />
       <main className="min-h-screen">
         <Routes>
