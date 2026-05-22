@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import Reveal from '../shared/Reveal'; // Importación necesaria
 
 const Panel = () => {
     const [pestañaActiva, setPestañaActiva] = useState('sponsors');
@@ -227,7 +228,7 @@ const Panel = () => {
         <div className="min-h-screen pt-30 md:pt-35 bg-neutral-950 flex flex-col md:flex-row font-sans text-neutral-content">
             
             {/* SIDEBAR */}
-            <aside className="w-full md:w-64 bg-neutral-900 border-r border-neutral-800 flex flex-col justify-between shrink-0">
+            <Reveal animation="fade-in-left" className="w-full md:w-64 bg-neutral-900 border-r border-neutral-800 flex flex-col justify-between shrink-0">
                 <div className="p-6">
                     <div className="mb-10 flex items-center gap-2">
                         <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center shadow-lg shadow-red-600/30">
@@ -247,14 +248,14 @@ const Panel = () => {
                 <div className="p-6 border-t border-neutral-800">
                     <Link to="/" className="text-neutral-500 hover:text-white transition-colors text-sm flex items-center gap-2">← Volver a la Web</Link>
                 </div>
-            </aside>
+            </Reveal>
 
             {/* CONTENIDO PRINCIPAL */}
             <main className="flex-1 p-6 md:p-10 overflow-y-auto">
                 
                 {/* VISTA 1: SPONSORS */}
                 {pestañaActiva === 'sponsors' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Reveal animation="fade-in-up" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <header className="mb-10">
                             <h1 className="text-3xl font-black text-white tracking-tight">Gestión de Auspiciantes</h1>
                             <p className="text-neutral-500">Cargá el nombre, el link y el logo de los comercios.</p>
@@ -324,12 +325,12 @@ const Panel = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Reveal>
                 )}
 
                 {/* VISTA 2: CARRUSEL PRINCIPAL */}
                 {pestañaActiva === 'carrusel' && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Reveal animation="fade-in-up" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <header className="mb-10">
                             <h1 className="text-3xl font-black text-white tracking-tight">Carrusel de Portada</h1>
                             <p className="text-neutral-500">Cargá las noticias principales que pasarán en grande al inicio de la web.</p>
@@ -405,7 +406,7 @@ const Panel = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Reveal>
                 )}
             </main>
         </div>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Reveal from '../shared/Reveal'; // Asegurate de tener el componente en la misma carpeta
 
 const Logos = () => {
     const [sponsors, setSponsors] = useState([]);
@@ -16,8 +18,6 @@ const Logos = () => {
     if (sponsors.length === 0) return null; 
 
     // Multiplicamos la lista de sponsors por 4. 
-    // Esto garantiza que el tren sea larguísimo y cubra hasta monitores 4K.
-    // Al trasladar el -50% en CSS, el salto será matemáticamente indetectable.
     const carruselInfinito = [...sponsors, ...sponsors, ...sponsors, ...sponsors];
 
     const RenderSponsor = ({ sponsor }) => {
@@ -46,9 +46,12 @@ const Logos = () => {
 
     return (
         <div className="w-full bg-neutral-950 py-16 border-b border-neutral-900 overflow-hidden relative flex flex-col items-center">
-            <p className="text-neutral-500 text-xs font-bold uppercase tracking-[0.2em] mb-12 text-center">
-                Acompañan a Radio Libertad
-            </p>
+            
+            <Reveal animation="fade-in-up" delay="100ms">
+                <p className="text-neutral-500 text-xs font-bold uppercase tracking-[0.2em] mb-12 text-center">
+                    Acompañan a Radio Libertad
+                </p>
+            </Reveal>
 
             <style>
                 {`
@@ -60,22 +63,19 @@ const Logos = () => {
                         display: flex;
                         align-items: center;
                         width: max-content;
-                        /* Podés cambiar el 40s si querés que vaya más rápido o más lento */
                         animation: scrollInfinito 40s linear infinite;
                     }
                 `}
             </style>
 
-            <div className="relative w-full flex">
+            {/* Aplicamos Reveal directamente al contenedor del carrusel manteniendo sus clases */}
+            <Reveal animation="fade-in-up" delay="300ms" className="relative w-full flex">
                 
                 {/* Sombras laterales */}
                 <div className="absolute left-0 top-0 bottom-0 w-24 md:w-64 bg-linear-to-r from-neutral-950 to-neutral-950/0 z-10 pointer-events-none"></div>
                 <div className="absolute right-0 top-0 bottom-0 w-24 md:w-64 bg-linear-to-l from-neutral-950 to-neutral-950/0 z-10 pointer-events-none"></div>
 
-                {/* ACÁ ESTÁ LA MAGIA: 
-                    El gap (espacio entre logos) y el pr (padding al final) SON EXACTAMENTE IGUALES.
-                    Esto hace que la matemática del translateX(-50%) encaje a la perfección. 
-                */}
+                {/* Tren de logos */}
                 <div className="animacion-carrusel gap-20 md:gap-37.5 pr-20 md:pr-37.5">
                     
                     {carruselInfinito.map((sponsor, index) => (
@@ -85,7 +85,7 @@ const Logos = () => {
                     ))}
                     
                 </div>
-            </div>
+            </Reveal>
         </div>
     );
 };

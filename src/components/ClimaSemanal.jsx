@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Reveal from '../components/shared/Reveal'; // Asegúrate de que la ruta sea correcta
 
 const renderIcono = (estado, className) => {
     switch (estado) {
@@ -36,166 +37,110 @@ const ClimaSemanal = () => {
                 const respuesta = await fetch(url);
                 const datos = await respuesta.json();
 
-                if (datos.cod !== "200") {
-                    throw new Error(datos.message);
-                }
+                if (datos.cod !== "200") throw new Error(datos.message);
 
                 if (datos && datos.list) {
                     const diasAgrupados = {};
-
                     datos.list.forEach(item => {
-                        const fecha = item.dt_txt.split(' ')[0]; 
-                        
+                        const fecha = item.dt_txt.split(' ')[0];
                         if (!diasAgrupados[fecha]) {
-                            diasAgrupados[fecha] = {
-                                min: item.main.temp_min,
-                                max: item.main.temp_max,
-                                condiciones: [],
-                                textos: []
-                            };
+                            diasAgrupados[fecha] = { min: item.main.temp_min, max: item.main.temp_max, condiciones: [], textos: [] };
                         } else {
                             if (item.main.temp_min < diasAgrupados[fecha].min) diasAgrupados[fecha].min = item.main.temp_min;
                             if (item.main.temp_max > diasAgrupados[fecha].max) diasAgrupados[fecha].max = item.main.temp_max;
                         }
-                        
                         diasAgrupados[fecha].condiciones.push(item.weather[0].main);
                         diasAgrupados[fecha].textos.push(item.weather[0].description);
                     });
 
                     const diasMapeados = Object.keys(diasAgrupados).slice(0, 6).map((fechaStr, index) => {
                         const diaData = diasAgrupados[fechaStr];
-                        
                         const fechaObj = new Date(fechaStr + "T12:00:00");
-                        const opciones = { weekday: 'long' };
-                        let nombreDia = new Intl.DateTimeFormat('es-AR', opciones).format(fechaObj);
+                        let nombreDia = new Intl.DateTimeFormat('es-AR', { weekday: 'long' }).format(fechaObj);
                         nombreDia = nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1);
-
-                        // --- NUEVA LÓGICA DE PRIORIDAD DE LLUVIA ---
-                        // Buscamos si en alguna de las 8 franjas horarias del día hay lluvia o tormenta
-                        const indiceLluvia = diaData.condiciones.findIndex(c => ["Rain", "Drizzle", "Thunderstorm"].includes(c));
                         
-                        let condicionPrincipal = "";
-                        let textoPrincipal = "";
-
-                        if (indiceLluvia !== -1) {
-                            // Si llueve, forzamos esa condición para avisar
-                            condicionPrincipal = diaData.condiciones[indiceLluvia];
-                            textoPrincipal = diaData.textos[indiceLluvia];
-                        } else {
-                            // Si no llueve, tomamos el clima del mediodía
-                            const indiceCentral = Math.floor(diaData.condiciones.length / 2);
-                            condicionPrincipal = diaData.condiciones[indiceCentral];
-                            textoPrincipal = diaData.textos[indiceCentral];
-                        }
-                        // ---------------------------------------------
+                        const indiceLluvia = diaData.condiciones.findIndex(c => ["Rain", "Drizzle", "Thunderstorm"].includes(c));
+                        let condicionPrincipal = (indiceLluvia !== -1) ? diaData.condiciones[indiceLluvia] : diaData.condiciones[Math.floor(diaData.condiciones.length / 2)];
+                        let textoPrincipal = (indiceLluvia !== -1) ? diaData.textos[indiceLluvia] : diaData.textos[Math.floor(diaData.condiciones.length / 2)];
 
                         let estadoClima = "soleado";
-                        if (["Rain", "Drizzle", "Thunderstorm"].includes(condicionPrincipal)) {
-                            estadoClima = "lluvia";
-                        } else if (condicionPrincipal === "Clouds") {
-                            if (textoPrincipal.includes("muy") || textoPrincipal.includes("cubierto")) {
-                                estadoClima = "nublado";
-                            } else {
-                                estadoClima = "parcial";
-                            }
-                        } else if (condicionPrincipal === "Clear") {
-                            estadoClima = "soleado";
-                        }
+                        if (["Rain", "Drizzle", "Thunderstorm"].includes(condicionPrincipal)) estadoClima = "lluvia";
+                        else if (condicionPrincipal === "Clouds") estadoClima = (textoPrincipal.includes("muy") || textoPrincipal.includes("cubierto")) ? "nublado" : "parcial";
 
-                        return {
-                            id: index,
-                            dia: index === 0 ? "Hoy" : nombreDia.substring(0, 3), 
-                            min: Math.round(diaData.min),
-                            max: Math.round(diaData.max),
-                            estadoTexto: textoPrincipal,
-                            estado: estadoClima
-                        };
+                        return { id: index, dia: index === 0 ? "Hoy" : nombreDia.substring(0, 3), min: Math.round(diaData.min), max: Math.round(diaData.max), estadoTexto: textoPrincipal, estado: estadoClima };
                     });
-
                     setPronostico(diasMapeados);
                 }
             } catch (err) {
-                console.error("Error cargando el clima:", err);
-                if (err.message.includes("Invalid API key")) {
-                    setError("Clave API en proceso de activación. Por favor, esperá unos minutos.");
-                } else {
-                    setError(err.message);
-                }
+                setError(err.message.includes("Invalid API key") ? "Clave API en proceso de activación." : err.message);
             } finally {
                 setCargando(false);
             }
         };
-
         obtenerClima();
     }, []);
 
     return (
-        <div className="w-full bg-neutral-950 py-8 md:py-12">
-            <div className="max-w-6xl mx-auto px-4 md:px-8">
-                
-                <div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
-                    
-                    <div className="lg:w-1/3 bg-linear-to-br from-neutral-800 to-neutral-900 p-6 md:p-8 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-neutral-800">
-                        <div className="flex items-center gap-2 mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-red-600">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                            </svg>
-                            <span className="text-neutral-300 font-semibold uppercase tracking-wider text-sm">San Pedro de Colalao</span>
+        <section className="w-full bg-neutral-950 py-8 md:py-12">
+            <Reveal animation="fade-in-up">
+                <div className="max-w-6xl mx-auto px-4 md:px-8">
+                    <div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+                        
+                        {/* Clima Actual */}
+                        <div className="lg:w-1/3 bg-linear-to-br from-neutral-800 to-neutral-900 p-6 md:p-8 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-neutral-800">
+                            <Reveal animation="fade-in-up" delay="200ms">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-red-600">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                    <span className="text-neutral-300 font-semibold uppercase tracking-wider text-sm">San Pedro de Colalao</span>
+                                </div>
+                            </Reveal>
+
+                            {cargando ? (
+                                <div className="flex items-center gap-3 text-neutral-500 py-4"><div className="w-6 h-6 border-2 border-neutral-700 border-t-red-600 rounded-full animate-spin"></div><span>Cargando...</span></div>
+                            ) : error ? (
+                                <span className="text-red-500 text-sm">{error}</span>
+                            ) : pronostico.length > 0 && (
+                                <Reveal animation="fade-in-up" delay="400ms">
+                                    <div className="flex items-center gap-6">
+                                        {renderIcono(pronostico[0].estado, 'w-20 h-20 md:w-24 md:h-24 drop-shadow-md')}
+                                        <div>
+                                            <div className="text-5xl md:text-6xl font-black text-white tracking-tighter">{pronostico[0].max}°</div>
+                                            <div className="text-neutral-400 font-medium text-lg capitalize mt-1">{pronostico[0].estadoTexto}</div>
+                                        </div>
+                                    </div>
+                                </Reveal>
+                            )}
                         </div>
 
-                        {cargando ? (
-                            <div className="flex items-center gap-3 text-neutral-500 py-4">
-                                <div className="w-6 h-6 border-2 border-neutral-700 border-t-red-600 rounded-full animate-spin"></div>
-                                <span>Cargando...</span>
-                            </div>
-                        ) : error ? (
-                            <span className="text-red-500 text-sm">{error}</span>
-                        ) : pronostico.length > 0 && (
-                            <div className="flex items-center gap-6">
-                                {renderIcono(pronostico[0].estado, 'w-20 h-20 md:w-24 md:h-24 drop-shadow-md')}
-                                <div>
-                                    <div className="text-5xl md:text-6xl font-black text-white tracking-tighter">
-                                        {pronostico[0].max}°
-                                    </div>
-                                    <div className="text-neutral-400 font-medium text-lg capitalize mt-1">
-                                        {pronostico[0].estadoTexto}
-                                    </div>
+                        {/* Pronóstico Semanal */}
+                        <div className="lg:w-2/3 p-6 md:p-8 flex items-center">
+                            {cargando ? (
+                                <div className="w-full text-center text-neutral-600 font-medium">Buscando pronóstico...</div>
+                            ) : error ? (
+                                <div className="w-full text-center text-neutral-600 font-medium">No disponible</div>
+                            ) : (
+                                <div className="w-full flex justify-between gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                                    {pronostico.slice(1).map((dia, index) => (
+                                        <Reveal key={dia.id} animation="fade-in-up" delay={`${(index + 1) * 150}ms`} className="flex flex-col items-center justify-center min-w-17.5">
+                                            <span className="text-neutral-400 font-bold uppercase tracking-widest text-xs mb-3">{dia.dia}</span>
+                                            <div className="mb-3" title={dia.estadoTexto}>
+                                                {renderIcono(dia.estado, 'w-8 h-8 md:w-10 md:h-10')}
+                                            </div>
+                                            <div className="flex flex-col items-center gap-0.5 text-sm md:text-base">
+                                                <span className="text-white font-bold">{dia.max}°</span>
+                                                <span className="text-neutral-500 font-medium">{dia.min}°</span>
+                                            </div>
+                                        </Reveal>
+                                    ))}
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-
-                    <div className="lg:w-2/3 p-6 md:p-8 flex items-center">
-                        {cargando ? (
-                            <div className="w-full text-center text-neutral-600 font-medium">Buscando pronóstico exacto...</div>
-                        ) : error ? (
-                            <div className="w-full text-center text-neutral-600 font-medium">No disponible</div>
-                        ) : (
-                            <div className="w-full flex justify-between gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
-                                {pronostico.slice(1).map((dia) => (
-                                    <div key={dia.id} className="flex flex-col items-center justify-center min-w-15 md:min-w-20">
-                                        <span className="text-neutral-400 font-bold uppercase tracking-widest text-xs mb-3">
-                                            {dia.dia}
-                                        </span>
-                                        
-                                        <div className="mb-3" title={dia.estadoTexto}>
-                                            {renderIcono(dia.estado, 'w-8 h-8 md:w-10 md:h-10')}
-                                        </div>
-                                        
-                                        <div className="flex flex-col items-center gap-0.5 text-sm md:text-base">
-                                            <span className="text-white font-bold">{dia.max}°</span>
-                                            <span className="text-neutral-500 font-medium">{dia.min}°</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    
                 </div>
-            </div>
-        </div>
+            </Reveal>
+        </section>
     );
 };
 

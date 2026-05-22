@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Reveal from './Reveal'; // Asegúrate de tener este componente en tu carpeta
 
 const Footer = () => {
-  // --- LÓGICA DE SESIÓN (SIN BORRAR NADA MÁS) ---
+  // --- LÓGICA DE SESIÓN (ORIGINAL) ---
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('tokenAdmin'));
 
   useEffect(() => {
@@ -16,17 +17,17 @@ const Footer = () => {
     window.dispatchEvent(new Event('auth-change'));
   };
 
-  // Obtenemos el año actual automáticamente para el copyright
   const anioActual = new Date().getFullYear();
 
   return (
     <footer className="bg-neutral-950 pt-16 pb-8 border-t border-neutral-900 text-neutral-400">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
+        
         {/* Contenedor principal de columnas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 mb-12">
+          
           {/* Columna 1: Marca y Descripción */}
-          <div className="flex flex-col items-start">
-            {/* Logo Tipográfico (Mismo estilo que el menú) */}
+          <Reveal animation="fade-in-up" delay="100ms" className="flex flex-col items-start">
             <Link
               to="/"
               className="flex items-center gap-2 group cursor-pointer mb-4"
@@ -45,10 +46,10 @@ const Footer = () => {
               Acompañando tus días con la mejor música y la información local y
               provincial que necesitás.
             </p>
-          </div>
+          </Reveal>
 
           {/* Columna 2: Enlaces Rápidos */}
-          <div className="flex flex-col items-start md:items-center">
+          <Reveal animation="fade-in-up" delay="200ms" className="flex flex-col items-start md:items-center">
             <div>
               <h4 className="text-white font-bold tracking-wide uppercase mb-4 text-sm">
                 Enlaces Rápidos
@@ -91,10 +92,10 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
-          </div>
+          </Reveal>
 
           {/* Columna 3: Contacto y Redes */}
-          <div className="flex flex-col items-start md:items-end text-left md:text-right">
+          <Reveal animation="fade-in-up" delay="300ms" className="flex flex-col items-start md:items-end text-left md:text-right">
             <h4 className="text-white font-bold tracking-wide uppercase mb-4 text-sm">
               Comunicate
             </h4>
@@ -181,16 +182,16 @@ const Footer = () => {
                 </svg>
               </a>
             </div>
-          </div>
+          </Reveal>
         </div>
 
         {/* Barra inferior: Copyright y Créditos */}
-        <div className="border-t border-neutral-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-neutral-400">
+        <Reveal animation="fade-in-up" delay="400ms" className="border-t border-neutral-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-neutral-400">
           <p>© {anioActual} Radio Libertad. Todos los derechos reservados.</p>
           <p>
             Desarrollado en <span className="text-red-600">Tucumán</span>
           </p>
-        </div>
+        </Reveal>
       </div>
     </footer>
   );
