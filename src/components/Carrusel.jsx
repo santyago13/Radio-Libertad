@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import Reveal from '../components/shared/Reveal'; // <-- Asegurate de que esta ruta sea correcta
+import Reveal from '../components/shared/Reveal'; 
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -12,7 +12,8 @@ const Carrusel = () => {
     const [cargando, setCargando] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/slides')
+        // Usamos la variable de entorno para producción
+        fetch(`${import.meta.env.VITE_API_URL}/slides`)
             .then(res => res.json())
             .then(data => {
                 setSlides(data);
@@ -62,7 +63,7 @@ const Carrusel = () => {
                                 </h2>
                             </Reveal>
                             
-                            {/* Subtítulo con animación y leve delay */}
+                            {/* Subtítulo con animación */}
                             {slide.subtitulo && (
                                 <Reveal animation="fade-in-up" delay="300ms">
                                     <p className="text-gray-200 text-lg md:text-xl font-medium mb-8 max-w-2xl drop-shadow-sm">
@@ -71,7 +72,7 @@ const Carrusel = () => {
                                 </Reveal>
                             )}
 
-                            {/* Botón con animación y delay mayor */}
+                            {/* Botón con animación */}
                             <Reveal animation="fade-in-up" delay="500ms">
                                 <a 
                                     href={slide.link || "#"} 
@@ -86,7 +87,7 @@ const Carrusel = () => {
                     </SwiperSlide>
                 ))}
 
-                {/* Flechas (Lógica igual) */}
+                {/* Flechas */}
                 {slides.length > 1 && (
                     <>
                         <button className="swiper-button-prev-custom hidden md:flex absolute top-[50%] translate-y-[-50%] left-6 text-2xl rounded-full p-2 bg-black/40 text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 z-20 items-center justify-center w-10 h-10">

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Reveal from '../shared/Reveal'; // Importación necesaria
+import Reveal from '../shared/Reveal'; 
 
 const Panel = () => {
     const [pestañaActiva, setPestañaActiva] = useState('sponsors');
-    const [cargando, setCargando] = useState(false); // Estado de carga global para ambas pestañas
+    const [cargando, setCargando] = useState(false);
 
     // ==========================================
     // ESTADOS: SPONSORS
@@ -34,20 +34,20 @@ const Panel = () => {
     // Al cargar el panel, traemos Sponsors y Slides
     useEffect(() => {
         // Traer Sponsors
-        fetch('http://localhost:5000/api/sponsors')
+        fetch(`${import.meta.env.VITE_API_URL}/sponsors`)
             .then(res => res.json())
             .then(data => setSponsors(data))
             .catch(error => console.error("Error trayendo sponsors:", error));
 
         // Traer Slides
-        fetch('http://localhost:5000/api/slides')
+        fetch(`${import.meta.env.VITE_API_URL}/slides`)
             .then(res => res.json())
             .then(data => setSlides(data))
             .catch(error => console.error("Error trayendo slides:", error));
     }, []);
 
     // ==========================================
-    // FUNCIONES: SPONSORS (Intactas)
+    // FUNCIONES: SPONSORS
     // ==========================================
     const manejarImagenSponsor = (e) => {
         const archivo = e.target.files[0];
@@ -98,12 +98,13 @@ const Panel = () => {
         if (imagenSponsor) formData.append('imagen', imagenSponsor); 
 
         try {
+            let respuesta;
             if (editandoSponsorId) {
-                const respuesta = await fetch(`http://localhost:5000/api/sponsors/${editandoSponsorId}`, { method: 'PUT', body: formData });
+                respuesta = await fetch(`${import.meta.env.VITE_API_URL}/sponsors/${editandoSponsorId}`, { method: 'PUT', body: formData });
                 const data = await respuesta.json();
                 setSponsors(sponsors.map(s => s._id === editandoSponsorId ? data : s));
             } else {
-                const respuesta = await fetch('http://localhost:5000/api/sponsors', { method: 'POST', body: formData });
+                respuesta = await fetch(`${import.meta.env.VITE_API_URL}/sponsors`, { method: 'POST', body: formData });
                 const data = await respuesta.json();
                 setSponsors([data, ...sponsors]);
             }
@@ -123,7 +124,7 @@ const Panel = () => {
         
         if (confirmacion.isConfirmed) {
             try {
-                await fetch(`http://localhost:5000/api/sponsors/${id}`, { method: 'DELETE' });
+                await fetch(`${import.meta.env.VITE_API_URL}/sponsors/${id}`, { method: 'DELETE' });
                 setSponsors(sponsors.filter(s => s._id !== id));
                 Swal.fire({ title: '¡Eliminado!', text: 'Sponsor borrado.', icon: 'success', background: '#171717', color: '#ffffff', confirmButtonColor: '#dc2626', customClass: { popup: 'rounded-3xl border border-neutral-800' }, timer: 1500, showConfirmButton: false });
             } catch (error) {
@@ -167,7 +168,6 @@ const Panel = () => {
         e.preventDefault();
         if (!tituloSlide.trim()) return;
 
-        // Si es nuevo, la imagen es obligatoria
         if (!editandoSlideId && !imagenSlide) {
             Swal.fire({ title: 'Atención', text: 'Tenés que subir una imagen de fondo para el banner.', icon: 'warning', background: '#171717', color: '#ffffff', confirmButtonColor: '#dc2626', customClass: { popup: 'rounded-3xl border border-neutral-800' } });
             return;
@@ -190,12 +190,13 @@ const Panel = () => {
         if (imagenSlide) formData.append('imagen', imagenSlide); 
 
         try {
+            let respuesta;
             if (editandoSlideId) {
-                const respuesta = await fetch(`http://localhost:5000/api/slides/${editandoSlideId}`, { method: 'PUT', body: formData });
+                respuesta = await fetch(`${import.meta.env.VITE_API_URL}/slides/${editandoSlideId}`, { method: 'PUT', body: formData });
                 const data = await respuesta.json();
                 setSlides(slides.map(s => s._id === editandoSlideId ? data : s));
             } else {
-                const respuesta = await fetch('http://localhost:5000/api/slides', { method: 'POST', body: formData });
+                respuesta = await fetch(`${import.meta.env.VITE_API_URL}/slides`, { method: 'POST', body: formData });
                 const data = await respuesta.json();
                 setSlides([data, ...slides]);
             }
@@ -215,7 +216,7 @@ const Panel = () => {
         
         if (confirmacion.isConfirmed) {
             try {
-                await fetch(`http://localhost:5000/api/slides/${id}`, { method: 'DELETE' });
+                await fetch(`${import.meta.env.VITE_API_URL}/slides/${id}`, { method: 'DELETE' });
                 setSlides(slides.filter(s => s._id !== id));
                 Swal.fire({ title: '¡Eliminado!', text: 'Banner removido.', icon: 'success', background: '#171717', color: '#ffffff', confirmButtonColor: '#dc2626', customClass: { popup: 'rounded-3xl border border-neutral-800' }, timer: 1500, showConfirmButton: false });
             } catch (error) {
