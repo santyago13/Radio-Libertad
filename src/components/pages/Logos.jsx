@@ -6,9 +6,20 @@ const Logos = () => {
     const [sponsors, setSponsors] = useState([]);
 
     useEffect(() => {
-        // Usamos la variable de entorno para que funcione en Vercel
-        fetch(`${import.meta.env.VITE_API_URL}/sponsors`)
-            .then(res => res.json())
+        // Obtenemos la URL de la variable de entorno
+        const baseUrl = import.meta.env.VITE_API_URL;
+        
+        // Validación de seguridad para debuggear
+        if (!baseUrl) {
+            console.error("❌ ERROR: VITE_API_URL no está definida en las variables de entorno de Vercel");
+            return;
+        }
+
+        fetch(`${baseUrl}/sponsors`)
+            .then(res => {
+                if (!res.ok) throw new Error(`Error ${res.status}: No se pudo conectar al servidor`);
+                return res.json();
+            })
             .then(data => {
                 const sponsorsActivos = data.filter(sponsor => sponsor.estado === 'Activo');
                 setSponsors(sponsorsActivos);
@@ -16,6 +27,7 @@ const Logos = () => {
             .catch(error => console.error("Error al cargar logos:", error));
     }, []);
 
+    // Si no hay sponsors, no renderizamos nada (o podrías poner un esqueleto de carga)
     if (sponsors.length === 0) return null; 
 
     const carruselInfinito = [...sponsors, ...sponsors, ...sponsors, ...sponsors];
@@ -69,20 +81,15 @@ const Logos = () => {
             </style>
 
             <Reveal animation="fade-in-up" delay="300ms" className="relative w-full flex">
-                
-                {/* Sombras laterales */}
                 <div className="absolute left-0 top-0 bottom-0 w-24 md:w-64 bg-linear-to-r from-neutral-950 to-neutral-950/0 z-10 pointer-events-none"></div>
                 <div className="absolute right-0 top-0 bottom-0 w-24 md:w-64 bg-linear-to-l from-neutral-950 to-neutral-950/0 z-10 pointer-events-none"></div>
 
-                {/* Tren de logos */}
                 <div className="animacion-carrusel gap-20 md:gap-37.5 pr-20 md:pr-37.5">
-                    
                     {carruselInfinito.map((sponsor, index) => (
                         <div key={`${sponsor._id}-${index}`} className="flex items-center justify-center whitespace-nowrap shrink-0">
                             <RenderSponsor sponsor={sponsor} />
                         </div>
                     ))}
-                    
                 </div>
             </Reveal>
         </div>
