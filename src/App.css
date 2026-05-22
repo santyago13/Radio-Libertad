@@ -1,0 +1,65 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px); /* Empieza 30px abajo */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Termina en su lugar */
+  }
+}
+
+/* 2. Definimos el movimiento "Aparecer desde la izquierda" */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px); /* Empieza 30px a la izquierda */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px); /* Empieza 30px a la derecha */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px); /* Empieza 30px arriba */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Clases para usar */
+.fade-in-up {
+  opacity: 0; /* Importante: empieza invisible */
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.fade-in-left {
+  opacity: 0; /* Importante: empieza invisible */
+  animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.fade-in-right {
+  opacity: 0; /* Importante: empieza invisible */
+  animation: fadeInRight 0.8s ease-out forwards;
+}
+
+.fade-in-down {
+  opacity: 0; /* Importante: empieza invisible */
+  animation: fadeInDown 0.8s ease-out forwards;
+}

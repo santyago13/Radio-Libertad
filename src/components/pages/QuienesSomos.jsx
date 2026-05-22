@@ -1,4 +1,5 @@
 import React from 'react';
+import Reveal from '../shared/Reveal'; // Asegurate de importar tu componente Reveal
 
 const QuienesSomos = () => {
     return (
@@ -11,7 +12,7 @@ const QuienesSomos = () => {
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 mb-20 md:mb-32">
                     
                     {/* Columna Izquierda: Textos */}
-                    <div className="w-full lg:w-1/2 flex flex-col items-start">
+                    <Reveal animation="fade-in-left" delay="100ms" className="w-full lg:w-1/2 flex flex-col items-start">
                         <span className="text-red-600 font-bold tracking-widest uppercase text-sm mb-4 flex items-center gap-3">
                             <span className="w-8 h-0.5 bg-red-600"></span>
                             Nuestra Historia
@@ -39,10 +40,10 @@ const QuienesSomos = () => {
                                 <div className="text-xs md:text-sm font-medium text-neutral-500 uppercase tracking-widest">Frecuencia</div>
                             </div>
                         </div>
-                    </div>
+                    </Reveal>
 
                     {/* Columna Derecha: Imagen Destacada */}
-                    <div className="w-full lg:w-1/2 relative mt-8 lg:mt-0">
+                    <Reveal animation="fade-in-right" delay="300ms" className="w-full lg:w-1/2 relative mt-8 lg:mt-0">
                         <div className="absolute -inset-4 bg-red-600/20 blur-3xl rounded-full z-0 pointer-events-none"></div>
                         
                         <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl shadow-black border border-neutral-800 bg-neutral-900 group">
@@ -66,13 +67,13 @@ const QuienesSomos = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Reveal>
                 </div>
 
                 {/* -----------------------------------------------------
                     SECCIÓN 2: MAPA DE UBICACIÓN
                 ------------------------------------------------------ */}
-                <div className="w-full bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 md:p-10 flex flex-col items-center">
+                <Reveal animation="fade-in-up" delay="200ms" className="w-full bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 md:p-10 flex flex-col items-center">
                     
                     <div className="text-center mb-8">
                         <span className="text-red-600 font-bold tracking-widest uppercase text-sm mb-2 block">
@@ -86,8 +87,7 @@ const QuienesSomos = () => {
                         </p>
                     </div>
 
-                    {/* Contenedor del Iframe. 
-                        Acá ocurre la magia del modo oscuro en el className del iframe */}
+                    {/* Contenedor del Iframe */}
                     <div className="w-full h-75 md:h-112.5 rounded-2xl overflow-hidden border border-neutral-700 shadow-xl shadow-black/50 relative bg-neutral-950">
                         <iframe 
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.8102365621858!2d-65.49872072466363!3d-26.235354765243233!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9418bd811a82ec49%3A0xc3d2bd845eb443b!2sRadio%20Libertad%20103.1%20Mhz.!5e0!3m2!1ses!2sar!4v1779220075161!5m2!1ses!2sar" 
@@ -102,7 +102,7 @@ const QuienesSomos = () => {
                         ></iframe>
                     </div>
 
-                    {/* Fila inferior de datos rápidos abajo del mapa */}
+                    {/* Fila inferior de datos rápidos */}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 mt-8 w-full">
                         <div className="flex items-center gap-3 text-neutral-300">
                             <div className="p-3 rounded-full bg-neutral-800/80 text-red-500">
@@ -130,7 +130,7 @@ const QuienesSomos = () => {
                         </div>
                     </div>
 
-                </div>
+                </Reveal>
             </div>
         </div>
     );
