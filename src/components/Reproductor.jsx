@@ -8,13 +8,32 @@ const Reproductor = () => {
     const streamUrl = "https://streaming.escuchanosonline.com:7307/;";
 
     const togglePlay = () => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
         if (isPlaying) {
-            audioRef.current.pause();
+            // AL PAUSAR: Frenamos y borramos el link para limpiar la memoria del celular
+            audio.pause();
+            audio.removeAttribute('src'); 
+            audio.load();
+            setIsPlaying(false);
         } else {
-            audioRef.current.load();
-            audioRef.current.play();
+            // AL REPRODUCIR: Volvemos a inyectar el link fresco y manejamos la promesa
+            audio.src = streamUrl;
+            audio.load();
+            
+            const playPromise = audio.play();
+
+            // Esto evita que Safari/Chrome tiren error si bloquean el autoplay
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    setIsPlaying(true);
+                }).catch(error => {
+                    console.error("El navegador bloqueó el audio:", error);
+                    setIsPlaying(false);
+                });
+            }
         }
-        setIsPlaying(!isPlaying);
     };
 
     const handleVolumeChange = (e) => {
@@ -37,7 +56,7 @@ const Reproductor = () => {
                     }
                     .bar-eq {
                         width: 3px;
-                        background-color: #ef4444; /* red-500 de Tailwind */
+                        background-color: #ef4444;
                         border-radius: 2px;
                         animation: eq 1s ease-in-out infinite;
                     }
@@ -48,8 +67,8 @@ const Reproductor = () => {
                 `}
             </style>
 
-            {/* Etiqueta de audio oculta */}
-            <audio ref={audioRef} src={streamUrl} preload="none" />
+            {/* Agregamos playsInline que ayuda en navegadores de iOS */}
+            <audio ref={audioRef} preload="none" playsInline />
             
             <Reveal animation="fade-in-up" className="max-w-7xl mx-auto w-full px-4 md:px-8 py-3 md:py-4 flex items-center justify-between">
                 
@@ -59,7 +78,6 @@ const Reproductor = () => {
                         <h3 className="text-sm md:text-base font-bold text-white tracking-tight leading-none">
                             Radio Libertad <span className="text-neutral-500 font-normal ml-1">103.1 FM</span>
                         </h3>
-                        {/* AQUÍ AGREGAMOS EL NOMBRE DEL ESTUDIO */}
                         <span className="text-[9px] md:text-[10px] text-neutral-400 font-medium uppercase tracking-widest leading-none">
                             Estudio Toufick Massa
                         </span>
