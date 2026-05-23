@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Reveal from './Reveal';
+// ACA IMPORTAMOS EL COMPONENTE
+import Reproductor from '../Reproductor'; 
 
 const navLinks = [
     { id: 1, text: "Inicio", path: "/" },
@@ -18,25 +20,8 @@ const Menu = () => {
     }, []);
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [volume, setVolume] = useState(1);
-    const audioRef = useRef(null);
-    const streamUrl = "https://streaming.escuchanosonline.com:7307/;";
-
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const closeMobileMenu = () => setIsMenuOpen(false);
-    const togglePlay = () => {
-        if (isPlaying) audioRef.current.pause();
-        else { audioRef.current.load(); audioRef.current.play(); }
-        setIsPlaying(!isPlaying);
-    };
-    const handleVolumeChange = (e) => {
-        const newVolume = parseFloat(e.target.value);
-        setVolume(newVolume);
-        if (audioRef.current) {
-            audioRef.current.volume = newVolume;
-        }
-    };
 
     const getLinkClass = (path) => 
         `relative py-1 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:transition-all 
@@ -44,8 +29,7 @@ const Menu = () => {
 
     return (
         <nav className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-neutral-800 text-neutral-content transition-all flex flex-col shadow-xl">
-            <audio ref={audioRef} src={streamUrl} preload="none" />
-
+            
             {/* --- PISO 1: BARRA DE NAVEGACIÓN (LOGO + LINKS + REDES) --- */}
             <div className="max-w-7xl mx-auto w-full flex justify-between items-center px-4 md:px-8 h-16 md:h-20">
                 
@@ -57,13 +41,7 @@ const Menu = () => {
                     
                     <Reveal animation="fade-in-left">
                         <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-2 md:gap-3 group cursor-pointer">
-                            {/* Logo limpio y de tamaño prudente (h-10 / md:h-12) */}
-                            <img 
-                                src="/Logo.png" 
-                                alt="Radio Libertad" 
-                                className="h-10 md:h-10 lg:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-                            />
-                            {/* Texto 103.1 FM a la par con una línea separadora */}
+                            <img src="/Logo.png" alt="Radio Libertad" className="h-10 md:h-10 lg:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
                             <span className="hidden sm:block text-red-500 font-black text-sm md:text-base tracking-widest border-l border-neutral-700 pl-2 md:pl-3">
                                 103.1 <span className="text-neutral-400 font-medium">FM</span>
                             </span>
@@ -76,17 +54,11 @@ const Menu = () => {
                     <ul className="flex items-center gap-8 font-semibold tracking-wide text-sm">
                         {navLinks.map((link) => (
                             <li key={link.id}>
-                                <Link to={link.path} className={getLinkClass(link.path)}>
-                                    {link.text}
-                                </Link>
+                                <Link to={link.path} className={getLinkClass(link.path)}>{link.text}</Link>
                             </li>
                         ))}
                         {isLoggedIn && (
-                            <li>
-                                <Link to="/panel" className={getLinkClass("/panel")}>
-                                    Panel
-                                </Link>
-                            </li>
+                            <li><Link to="/panel" className={getLinkClass("/panel")}>Panel</Link></li>
                         )}
                     </ul>
                 </Reveal>
@@ -102,31 +74,8 @@ const Menu = () => {
                 </Reveal>
             </div>
 
-            {/* --- PISO 2: REPRODUCTOR --- */}
-            <div className="w-full border-t border-neutral-800/50 bg-neutral-900/40">
-                <Reveal animation="fade-in-up" className="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3 w-auto md:w-1/3">
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-black rounded-lg overflow-hidden shrink-0 shadow-inner">
-                            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=150&auto=format&fit=crop" alt="Radio Libertad" className={`object-cover w-full h-full transition-all duration-500 ${isPlaying ? 'opacity-80 scale-105' : 'opacity-100'}`} />
-                        </div>
-                        <div className="flex flex-col text-left">
-                            <h3 className="text-sm md:text-base font-bold text-white tracking-tight leading-none">Escuchanos en vivo</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                                {isPlaying ? <span className="flex items-center gap-1 text-red-500 text-[10px] md:text-xs font-bold uppercase tracking-widest leading-none"><span className="animate-pulse h-1.5 w-1.5 bg-red-500 rounded-full"></span> Al Aire</span> : <span className="text-neutral-500 text-[10px] md:text-xs font-medium uppercase tracking-widest leading-none">Pausado</span>}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex justify-end md:justify-center flex-1 md:flex-none md:w-1/3 pr-1 md:pr-0">
-                        <button onClick={togglePlay} className="btn btn-circle btn-error border-none min-h-0 h-10 w-10 md:h-12 md:w-12 text-white shadow-lg shadow-red-600/20 hover:scale-105 transition-transform">
-                            {isPlaying ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 md:w-6 md:h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" fill="solid" viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 translate-x-0.5"><path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" /></svg>}
-                        </button>
-                    </div>
-                    <div className="hidden md:flex items-center justify-end gap-3 w-1/3 group">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200 transition-colors"><path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
-                        <input type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} className="w-24 h-1 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-red-600 hover:accent-red-500 transition-all" />
-                    </div>
-                </Reveal>
-            </div>
+            {/* --- PISO 2: REPRODUCTOR INYECTADO AQUÍ --- */}
+            <Reproductor />
 
             {/* --- MENÚ MÓVIL --- */}
             <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-64 border-t border-neutral-800 opacity-100' : 'max-h-0 opacity-0'}`}>

@@ -39,7 +39,7 @@ const Carrusel = () => {
     if (slides.length === 0) return null; 
 
     return (
-        <div className="w-full relative group">
+        <div className="w-full relative group mt-9 md:mt-5">
             <Swiper
                 modules={[Autoplay, Pagination, Navigation]}
                 spaceBetween={0}
