@@ -79,17 +79,19 @@ const Carrusel = () => {
                                 </Reveal>
                             )}
 
-                            {/* Botón con animación */}
-                            <Reveal animation="fade-in-up" delay="500ms">
-                                <a 
-                                    href={slide.link || "#"} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="btn btn-error btn-md md:btn-lg bg-red-600 text-white font-bold border-none shadow-md rounded-md px-8 mt-4 hover:bg-red-700 pointer-events-auto relative z-20 inline-flex items-center justify-center"
-                                >
-                                    Ver más
-                                </a>
-                            </Reveal>
+                            {/* Botón condicional: SÓLO se muestra si existe slide.link */}
+                            {slide.link && (
+                                <Reveal animation="fade-in-up" delay="500ms">
+                                    <a 
+                                        href={slide.link} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="btn btn-error btn-md md:btn-lg bg-red-600 text-white font-bold border-none shadow-md rounded-md px-8 mt-4 hover:bg-red-700 pointer-events-auto relative z-20 inline-flex items-center justify-center"
+                                    >
+                                        Ver más
+                                    </a>
+                                </Reveal>
+                            )}
                         </div>
                     </SwiperSlide>
                 ))}
