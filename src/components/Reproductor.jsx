@@ -12,19 +12,16 @@ const Reproductor = () => {
         if (!audio) return;
 
         if (isPlaying) {
-            // AL PAUSAR: Frenamos y borramos el link para limpiar la memoria del celular
             audio.pause();
             audio.removeAttribute('src'); 
             audio.load();
             setIsPlaying(false);
         } else {
-            // AL REPRODUCIR: Volvemos a inyectar el link fresco y manejamos la promesa
             audio.src = streamUrl;
             audio.load();
             
             const playPromise = audio.play();
 
-            // Esto evita que Safari/Chrome tiren error si bloquean el autoplay
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     setIsPlaying(true);
@@ -45,7 +42,7 @@ const Reproductor = () => {
     };
 
     return (
-        <div className="w-full border-t border-neutral-800/50 bg-neutral-900/40">
+        <div className="w-full border-t border-neutral-800/50 bg-neutral-900/40 relative z-60">
             {/* Animación CSS para el ecualizador */}
             <style>
                 {`
@@ -56,7 +53,7 @@ const Reproductor = () => {
                     }
                     .bar-eq {
                         width: 3px;
-                        background-color: #ef4444;
+                        background-color: #ef4444; 
                         border-radius: 2px;
                         animation: eq 1s ease-in-out infinite;
                     }
@@ -67,18 +64,18 @@ const Reproductor = () => {
                 `}
             </style>
 
-            {/* Agregamos playsInline que ayuda en navegadores de iOS */}
-            <audio ref={audioRef} preload="none" playsInline />
+            {/* Ocultamos el audio explícitamente para que Safari/Chrome no lo rendericen como un bloque invisible */}
+            <audio ref={audioRef} className="hidden" preload="none" playsInline />
             
             <Reveal animation="fade-in-up" className="max-w-7xl mx-auto w-full px-4 md:px-8 py-3 md:py-4 flex items-center justify-between">
                 
-                {/* SECCIÓN IZQUIERDA: Textos + Ecualizador */}
-                <div className="flex flex-col text-left w-auto md:w-1/3">
+                {/* SECCIÓN IZQUIERDA: Ajustada con min-w-0 para que no aplaste al botón en celulares chicos */}
+                <div className="flex flex-col text-left flex-1 min-w-0 pr-2 md:w-1/3">
                     <div className="flex flex-col gap-1">
-                        <h3 className="text-sm md:text-base font-bold text-white tracking-tight leading-none">
+                        <h3 className="text-sm md:text-base font-bold text-white tracking-tight leading-none truncate">
                             Radio Libertad <span className="text-neutral-500 font-normal ml-1">103.1 FM</span>
                         </h3>
-                        <span className="text-[9px] md:text-[10px] text-neutral-400 font-medium uppercase tracking-widest leading-none">
+                        <span className="text-[9px] md:text-[10px] text-neutral-400 font-medium uppercase tracking-widest leading-none truncate">
                             Estudio Toufick Massa
                         </span>
                     </div>
@@ -102,11 +99,11 @@ const Reproductor = () => {
                     </div>
                 </div>
 
-                {/* CENTRO: Botón Play Principal */}
-                <div className="flex justify-end md:justify-center flex-1 md:flex-none md:w-1/3 pr-1 md:pr-0">
+                {/* CENTRO: Botón Play blindado (shrink-0 asegura que mantenga su tamaño, z-50 lo pone por encima de todo) */}
+                <div className="flex justify-end md:justify-center shrink-0 w-14 md:flex-none md:w-1/3 pr-1 md:pr-0">
                     <button 
                         onClick={togglePlay} 
-                        className="btn btn-circle btn-error border-none min-h-0 h-10 w-10 md:h-12 md:w-12 text-white shadow-lg shadow-red-600/20 hover:scale-105 transition-transform"
+                        className="btn btn-circle btn-error border-none min-h-0 h-11 w-11 md:h-12 md:w-12 text-white shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-90 active:bg-red-700 pointer-events-auto relative z-99"
                         aria-label={isPlaying ? "Pausar Radio" : "Escuchar en Vivo"}
                     >
                         {isPlaying ? (
