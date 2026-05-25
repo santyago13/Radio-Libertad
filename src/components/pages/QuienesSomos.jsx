@@ -31,7 +31,7 @@ const QuienesSomos = () => {
                             </p>
                             
                             <p>
-                                Nuestra primera transmisión oficial se realizó el <strong className="text-white">9 de julio de 2024</strong>, marcando el inicio de un proyecto de comunicación independiente pensado para crecer junto a la audiencia local y regional, incorporando además el alcance global que hoy permiten las plataformas digitales e Internet.
+                                Nuestra primera transmisión oficial se realizó el <strong className="text-white">9 de julio de 2023</strong>, marcando el inicio de un proyecto de comunicación independiente pensado para crecer junto a la audiencia local y regional, incorporando además el alcance global que hoy permiten las plataformas digitales e Internet.
                             </p>
                             
                             <p>
@@ -62,7 +62,7 @@ const QuienesSomos = () => {
                                 <div className="text-xs md:text-sm font-medium text-neutral-500 uppercase tracking-widest">Frecuencia FM</div>
                             </div>
                             <div>
-                                <div className="text-3xl md:text-4xl font-black text-white mb-1">2024</div>
+                                <div className="text-3xl md:text-4xl font-black text-white mb-1">2023</div>
                                 <div className="text-xs md:text-sm font-medium text-neutral-500 uppercase tracking-widest">Año de Fundación</div>
                             </div>
                         </div>
